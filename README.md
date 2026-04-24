@@ -6,8 +6,9 @@
 <br>
 
 ## 👥 팀원 구성
-- **Frontend / Backend** : 플솝 25 진도현 (Main Character)
-- **AI 작가** : Google Gemini 2.5 Flash (Special Guest)
+- **Frontend** : 플솝 25 김유정
+- **Backend** : 플솝 25 진도현
+- **AI 작가** : Google Gemini 2.5 Flash
 
 <br>
 
@@ -71,14 +72,14 @@
 cd ./backend
 npm install
 # .env 파일에 GEMINI_API_KEY 설정 필수!
-npm start
+npm run dev
 ```
 
 ### **Frontend**
 ```bash
 cd ./frontend
 npm install
-npx expo start
+npm start
 ```
 
 <br>
