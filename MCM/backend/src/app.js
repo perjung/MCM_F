@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8080;
 // Gemini AI 설정
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-2.5-flash-lite",
   // 💡 중요: AI가 헛소리 안 하고 딱 JSON 형식으로만 대답하게 강제하는 옵션
   generationConfig: { responseMimeType: "application/json" }
 });
