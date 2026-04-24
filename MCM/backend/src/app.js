@@ -1,12 +1,18 @@
 import express from 'express';
 import cors from 'cors';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; // 👈 이게 꼭 있어야 합니다!
+import path from 'path';    // 👈 path도 추가하세요
+import { fileURLToPath } from 'url';
 
-// 1. 환경 변수 설정
-dotenv.config();
+// ES 모듈 방식에서 __dirname을 사용하기 위한 설정
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// 2. express 앱 생성 (이 줄이 app.post보다 반드시 위에 있어야 합니다!)
+// 1. 환경 변수 설정 (경로를 정확히 지정)
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+// 2. express 앱 생성
 const app = express();
 
 // 3. 미들웨어 설정
@@ -14,11 +20,15 @@ app.use(cors());
 app.use(express.json());
 
 // 4. Gemini 설정
+// dotenv.config()가 실행된 후라 process.env.GEMINI_API_KEY를 읽을 수 있습니다.
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash", // 모델명 확인 (2.5-flash-lite는 존재하지 않는 모델일 수 있습니다)
+  model: "gemini-2.5-flash-lite", 
   generationConfig: { responseMimeType: "application/json" }
 });
+
+// 키가 잘 읽혔는지 확인용 로그 (나중에 삭제하세요)
+console.log("API 키 로드 여부:", process.env.GEMINI_API_KEY ? "성공" : "실패(undefined)");
 
 // 2. 메인 AI 스토리 생성 라우트
 app.post('/api/story', async (req, res) => {
@@ -94,4 +104,9 @@ app.post('/api/story', async (req, res) => {
     console.error("AI 생성 중 에러 발생:", error);
     res.status(500).json({ error: "스토리 생성 중 문제가 발생했습니다." });
   }
+});
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`🚀 서버가 http://localhost:${PORT} 에서 대기 중입니다!`);
 });
