@@ -84,9 +84,25 @@ ${schedules.map(s => `- 시간대: ${s.time}, 계획: ${s.myAction || '평범한
 
     res.status(200).json({ data: storyData.results || [] });
   } catch (error) {
-    res.status(500).json({
-      error: '스토리 생성 실패',
-      detail: error.message,
+    console.error('스토리 생성 실패:', error.message);
+
+    const fallback = (req.body.schedules || []).map((s) => ({
+      time: s.time,
+      fullStory: `${s.myAction || '계획'}을 하려던 순간, 갑자기 엑스트라들이 난입해서 모든 계획이 대환장 코미디가 되었습니다!`,
+      extras: [
+        {
+          name: '수상한 행인',
+          action: '갑자기 등장해서 길을 막고 상황을 복잡하게 만들기',
+        },
+        {
+          name: '과몰입 친구',
+          action: '옆에서 쓸데없이 리액션을 크게 해서 모두의 시선을 끌기',
+        },
+      ],
+    }));
+
+    return res.status(200).json({
+      data: fallback,
     });
   }
 });
