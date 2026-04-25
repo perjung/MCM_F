@@ -80,7 +80,7 @@ export default function App() {
     setModalVisible(false);
   };
 
-  const goToExtraPage = async () => {
+const goToExtraPage = async () => {
     if (schedules.length === 0) {
       return Alert.alert("알림", "일정을 먼저 입력해주세요! 🎬");
     }
@@ -88,59 +88,49 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const promises = schedules.map(async (s) => {
-        try {
-          const res = await fetch(`${API_URL}/app/story`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              time: s.timeStr,
-              myAction: s.action,
-            }),
-          });
+      // 🔥 [체크 포인트 1] 프론트엔드에서 API를 1번만 쏘는지 확인하는 로그
+      console.log(`🚀 API 단 1회 호출 시작! (현재 일정 개수: ${schedules.length}개)`);
 
-          const json = await res.json();
+      // 1. 모든 일정을 하나의 배열로 묶기
+      const scheduleData = schedules.map(s => ({
+        time: s.timeStr,
+        myAction: s.action
+      }));
 
-          if (res.ok) {
-            return {
-              timeStr: s.timeStr,
-             data: {
-                time: json.data.time,
-                extras: json.data.extras,
-                fullStory: json.data.fullStory,
-              }
-            };
-          } else {
-            throw new Error("서버 응답 에러");
-          }
-        } catch (err) {
-          console.log(`${s.timeStr} 분석 실패:`, err);
-
-          return {
-            timeStr: s.timeStr,
-            data: {
-              name: "무명의 엑스트라",
-              extraAction: "주연의 등장을 돋보이게 하기 위해 자연스럽게 배경에 녹아듭니다.",
-              benefit: "평범한 일정이 갑자기 한 편의 장면처럼 느껴집니다.",
-              fullStory: ""
-            }
-          };
-        }
+      // 2. API를 딱 한 번만 호출! (바깥에 다른 map이나 Promise.all이 없어야 합니다)
+      const res = await fetch(`${API_URL}/app/story`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ schedules: scheduleData }), // 배열 전체를 한 번에 보냄
       });
 
-      const resultsArray = await Promise.all(promises);
+      console.log("🚀 API 응답 도착 완료!");
 
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error("서버 응답 에러");
+      }
+
+      // 3. 백엔드에서 받은 배열을 ExtraPage 포맷에 맞게 변환
       const finalResults = {};
-      resultsArray.forEach(item => {
-        finalResults[item.timeStr] = item.data;
-      });
+      if (json.data && Array.isArray(json.data)) {
+        json.data.forEach(item => {
+          finalResults[item.time] = {
+            time: item.time,
+            extras: item.extras,
+            fullStory: item.fullStory
+          };
+        });
+      }
 
       setSimulationResults(finalResults);
       setCurrentPage('extra');
 
     } catch (e) {
+      console.log("분석 실패:", e);
       Alert.alert("에러", "스토리 생성 중 문제가 발생했습니다. 서버를 확인해주세요!");
     } finally {
       setIsLoading(false);
