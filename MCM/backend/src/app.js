@@ -28,6 +28,7 @@ app.get('/app/count', (req, res) => {
 
 // CORS 설정
 const allowedOrigins = [
+  'https://mcm-p7cv678og-perjungs-projects.vercel.app',
   'https://mcm-git-main-jjinddos-projects.vercel.app', 
   'http://localhost:3000', 'http://localhost:8081', 'http://localhost:8080'
 ];
