@@ -34,3 +34,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+REACT_APP_API_URL=https://mcm-git-main-jjinddos-projects.vercel.app/

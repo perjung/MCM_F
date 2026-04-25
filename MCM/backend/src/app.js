@@ -37,7 +37,7 @@ const model = genAI.getGenerativeModel({
 console.log("API 키 로드 여부:", process.env.GEMINI_API_KEY ? "성공" : "실패(undefined)");
 
 // 2. 메인 AI 스토리 생성 라우트
-app.post('/api/story', async (req, res) => {
+app.post('/app/story', async (req, res) => {
   const { time, myAction } = req.body;
 
   // 행동 예외 처리 (계획이 시원하게 망한 상황으로 설정)
