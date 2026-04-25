@@ -10,7 +10,13 @@ import {
 } from 'react-native';
 import Timetable from './Timetable';
 
-export default function ExtraPage({ schedules = [], results = {}, onBack }) {
+export default function ExtraPage({
+  schedules = [],
+  results = {},
+  onBack,
+  onExtraPlanCheck,
+  onFinishDay
+}) {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   const selectedResult = selectedSchedule ? results[selectedSchedule.timeStr] : null;
@@ -40,6 +46,9 @@ export default function ExtraPage({ schedules = [], results = {}, onBack }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.finishDayButton} onPress={onFinishDay}>
+        <Text style={styles.finishDayButtonText}>하루 일과 마무리하기</Text>
+      </TouchableOpacity>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>엑스트라 플랜</Text>
         <Text style={styles.headerSubTitle}>Main Character Maker</Text>
@@ -59,7 +68,10 @@ export default function ExtraPage({ schedules = [], results = {}, onBack }) {
                   <TouchableOpacity
                     key={s.id}
                     style={styles.timeButton}
-                    onPress={() => setSelectedSchedule(s)}
+                    onPress={() => {
+                      setSelectedSchedule(s);
+                      onExtraPlanCheck && onExtraPlanCheck();
+                    }}
                   >
                     <Text style={styles.timeButtonText}>{s.timeStr}</Text>
                     <Text style={styles.timeButtonAction}>{s.action}</Text>
@@ -116,7 +128,10 @@ export default function ExtraPage({ schedules = [], results = {}, onBack }) {
             onDragComplete={() => {}}
             previewColor="transparent"
             readOnly={true}
-            onSchedulePress={(schedule) => setSelectedSchedule(schedule)}
+            onSchedulePress={(schedule) => {
+              setSelectedSchedule(schedule);
+              onExtraPlanCheck && onExtraPlanCheck();
+            }}
           />
         </View>
       </View>
@@ -330,4 +345,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold'
   },
+  finishDayButton: {
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  backgroundColor: '#111111',
+  paddingVertical: 9,
+  paddingHorizontal: 14,
+  borderRadius: 20,
+  zIndex: 99,
+  elevation: 5,
+},
+
+finishDayButtonText: {
+  color: '#FFFFFF',
+  fontSize: 12,
+  fontWeight: '900',
+},
 });

@@ -5,7 +5,7 @@ import Timetable from './components/Timetable';
 import ExtraPage from './components/ExtraPage'; 
 
 const PRESET_COLORS = ['#FF0000CC', '#FFFF00CC', '#29b829cc', '#0f0fb8cc', '#8c3434cc', '#d801d8cc'];
-const API_URL = "https://mcm-rho.vercel.app";
+const API_URL =  "https://mcm-rho.vercel.app";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('main'); 
@@ -17,6 +17,7 @@ export default function App() {
   const [inputText, setInputText] = useState('');
   const [simulationResults, setSimulationResults] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isExtraPlanChecked, setIsExtraPlanChecked] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -80,12 +81,26 @@ export default function App() {
     setModalVisible(false);
   };
 
+  const finishDay = () => {
+  if (
+    schedules.length === 0 ||
+    Object.keys(simulationResults).length === 0 ||
+    !isExtraPlanChecked
+  ) {
+    Alert.alert("알림", "엑스트라 플랜을 확인해주세요");
+    return;
+  }
+
+  Alert.alert("알림", "오늘 하루도 당신의 플랜은 지켜졌나요?");
+};
+
 const goToExtraPage = async () => {
     if (schedules.length === 0) {
       return Alert.alert("알림", "일정을 먼저 입력해주세요! 🎬");
     }
 
     setIsLoading(true);
+    setIsExtraPlanChecked(false);
 
     try {
       // 🔥 [체크 포인트 1] 프론트엔드에서 API를 1번만 쏘는지 확인하는 로그
@@ -143,12 +158,17 @@ const goToExtraPage = async () => {
         schedules={schedules}
         results={simulationResults}
         onBack={() => setCurrentPage('main')}
+        onExtraPlanCheck={() => setIsExtraPlanChecked(true)}
+        onFinishDay={finishDay}
       />
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.finishDayButton} onPress={finishDay}>
+       <Text style={styles.finishDayButtonText}>하루 일과 마무리하기</Text>
+      </TouchableOpacity>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>망상 플래너</Text>
         <Text style={styles.headerSubTitle}>Main Character Maker</Text>
@@ -482,4 +502,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 8,
   },
+  finishDayButton: {
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  backgroundColor: '#111111',
+  paddingVertical: 9,
+  paddingHorizontal: 14,
+  borderRadius: 20,
+  zIndex: 99,
+  elevation: 5,
+},
+
+finishDayButtonText: {
+  color: '#FFFFFF',
+  fontSize: 12,
+  fontWeight: '900',
+},
 });
