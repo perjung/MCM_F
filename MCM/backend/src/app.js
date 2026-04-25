@@ -12,13 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express();
 let totalApiRequests = 0;
 
-app.use((req, res, next) => {
-  if (req.path === '/app/story' && req.method === 'POST') {
-    totalApiRequests++;
-    console.log(`[API 호출 알림] 누적 호출: ${totalApiRequests}회`);
-  }
-  next();
-});
+app.use(cors());
 
 app.get('/app/count', (req, res) => {
   res.json({ totalCalls: totalApiRequests });
@@ -66,7 +60,7 @@ app.post('/app/story', async (req, res) => {
     1. 각 시간대별 일정마다 계획이 꼬여버린 현장에 '최소 1명에서 최대 4명'의 구체적인 조연(extras)들을 난입시켜줘.
     2. 각 조연은 반드시 고유한 'name'과 'action'을 가져야 해.
     3. 'fullStory'는 이 모든 조연들이 그 시간대에 얽혀서 내 계획을 어떻게 박살 냈는지 묘사한 내용이야. 각 시간대의 fullStory들이 전체적으로 자연스럽게 이어져야 해. 
-       단, 인과관계가 있는 문장들로 구성되어야 하고, 문장들 사이에 마침표, 느낌표로 딱 끊어서 생동감 있게 출력해줘!
+       단, 인과관계가 있는 문장들로 구성되어야 하고, 문장들 사이에 마침표, 느낌표로 딱 끊어서 "생동감 있게" 출력해줘!
     4. 'action'에 들어갈 문장의 끝맺음은 항상 '~하기'로 끝내야 해.
 
     결과는 반드시 아래의 JSON 형식으로만 응답해:
