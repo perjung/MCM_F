@@ -16,14 +16,13 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const app = express();
 
 // 3. 미들웨어 설정
-app.use(cors());
-/*
+//app.use(cors());
 // 지금은 그대로 두셔도 되지만, 프론트엔드 배포 후에는 아래처럼 수정하세요!
 app.use(cors({
-  origin: 'https://내-프론트엔드-도메인.vercel.app', // 이 주소만 허용
+  origin: 'https://mcm-git-main-jjinddos-projects.vercel.app/', // 이 주소만 허용
   credentials: true
 }));
-*/
+
 app.use(express.json());
 
 // 4. Gemini 설정
